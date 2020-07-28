@@ -11,11 +11,6 @@ document.addEventListener('mousemove', function(e) {
 })
 
 $(document).ready(function() {
-  initiate();
-});
-
-function initiate() {
-
   // canvas and ball html elements 
   canvas = $("#draw-canvas");
   ball = $("#ball");
@@ -29,18 +24,26 @@ function initiate() {
   console.log("Screen width: %d | height: %d", width, height);
 
   // new circle element
-  circle = new Circle(x, y, 20, 20, 20);
-  setBallPosition(x, y);
+  circle = new Circle(100, 100, 20, 10, 10);
+  //setBallPosition(x, y);
 
-  generate();
+  //generate();
+  ball.click(function() {
 
-}
+    circle.vx = Math.random() * 200;
+    circle.vy = Math.random() * 200;
+    generate();
+  });
+
+});
+
 
 /*      MOUSE AND MOVEMENT FUNCTIONS     */
 /* ------------------------------------- */
 
 function onMouseUpdate(e) {
   //console.log("Move");
+  /*
   var pos = getMousePos(e);
 
   var pageX = e.pageX;
@@ -54,14 +57,23 @@ function onMouseUpdate(e) {
 
     generate();
   }
+  */
 }
 
 function generate() {
 
-  processing = true;
-
   console.log("Generate");
 
+  if (circle.vx != 0 || circle.vy != 0) {
+
+    ball.animate({
+      top : '+='+circle.vx+'px', 
+      left : '+='+circle.vy+'px'
+    });
+  }
+
+  // set interval for function moveBall to 30ms
+  /*
   var id = setInterval(moveBall, 30);
 
   function moveBall() {
@@ -70,6 +82,8 @@ function generate() {
 
       circle.x += circle.vx; 
       circle.y += circle.vy;
+
+      
 
       // TODO ***
       // speed does not decrease linearly
@@ -86,6 +100,7 @@ function generate() {
 
     } 
   }
+  */
 }
 
 function getMousePos(e) {
@@ -109,10 +124,10 @@ function sleep(milliseconds) {
 
 
 function setBallPosition(x, y) {
-  ball.css("top", canvas.height() - y);
+  ball.css("top", y);
   ball.css("left", x);
 
-  console.log("Ball moved to posotion: %d %d", x, canvas.height() - y);
+  console.log("Ball moved to posotion: %d %d", x, y);
 }
 
 function Circle(x, y, r, vx , vy) {
