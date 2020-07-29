@@ -24,7 +24,7 @@ $(document).ready(function() {
   console.log("Screen width: %d | height: %d", width, height);
 
   // new circle element
-  circle = new Circle(width / 2, height / 2, 25, 10, 10);
+  circle = new Circle(width / 2, height / 2, 25, 0, 0);
 
   ball.css({top : height/2+'px', left : width/2+'542px'})
 
@@ -41,6 +41,12 @@ $(document).ready(function() {
 /* ------------------------------------- */
 
 function onMouseUpdate(e) {
+
+  if (circle.vx != 0 || circle.vy != 0) {
+    console.log("Ni enak")
+    return;
+  }
+
   console.log("Move");
   
   var pos = getMousePos(e);
@@ -55,8 +61,8 @@ function onMouseUpdate(e) {
   const y = parentOffset.top;
 
   if (Math.abs(x - pageX < 25) && Math.abs(y - pageY) < 25) {
-    circle.vx += 10;
-    circle.vy += 10;
+    circle.vx += 50;
+    circle.vy += 50;
     generate();
   }
 }
@@ -76,8 +82,13 @@ function generate() {
     circle.x += circle.vx;
     circle.y += circle.vy;
 
-    circle.vx = 0;
-    circle.vy = 0;
+    if (collision()) {
+      generate();
+
+    } else {
+      circle.vx = 0;
+      circle.vy = 0;
+    }
   }
 
   // set interval for function moveBall to 30ms
@@ -114,7 +125,21 @@ function generate() {
 
 function collision() {
 
+  var collision_detection = false;
 
+  if (circle.x >= width || circle.x == 0) {
+    circle.vx = circle.vx * -1; 
+    collision_detection = true;
+  }
+
+  if (circle.y >= height || circle.y == 0) {
+    circle.vy = circle.vy * -1; 
+    collision_detection = true;
+  }
+
+  if (collision_detection) {
+    return true;
+  }
 }
 
 function getMousePos(e) {
