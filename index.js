@@ -7,7 +7,7 @@ var l = null;
 var ball = null;
 var processing = false;
 document.addEventListener('mousemove', function(e) {
-  //onMouseUpdate(e);
+  onMouseUpdate(e);
 })
 
 $(document).ready(function() {
@@ -24,14 +24,13 @@ $(document).ready(function() {
   console.log("Screen width: %d | height: %d", width, height);
 
   // new circle element
-  circle = new Circle(100, 100, 20, 10, 10);
-  //setBallPosition(x, y);
+  circle = new Circle(width / 2, height / 2, 25, 10, 10);
 
-  //generate();
+  ball.css({top : height/2+'px', left : width/2+'542px'})
+
   ball.click(function() {
-
-    circle.vx = Math.random() * 200;
-    circle.vy = Math.random() * 200;
+    circle.vx = Math.random() * 200 - 100;
+    circle.vy = Math.random() * 200 - 100;
     generate();
   });
 
@@ -42,23 +41,26 @@ $(document).ready(function() {
 /* ------------------------------------- */
 
 function onMouseUpdate(e) {
-  //console.log("Move");
-  /*
+  console.log("Move");
+  
   var pos = getMousePos(e);
 
-  var pageX = e.pageX;
-  var pageY = e.pageY;
+  // mouse coordinates
+  var pageX = e.pageX - circle.r;
+  var pageY = e.pageY - circle.r;
 
-  console.log("%d %d %d %d", pageX, circle.x, pos.y, circle.y);
+  // actual ball coordinates
+  var parentOffset = ball.offset(); 
+  const x = parentOffset.left;
+  const y = parentOffset.top;
 
-  if (Math.abs(pageX - circle.x) < 10 && Math.abs(pageY - circle.y) < 10 && !processing) {
-    circle.vx = 10;
-    circle.vy = 10;
-
+  if (Math.abs(x - pageX < 25) && Math.abs(y - pageY) < 25) {
+    circle.vx += 10;
+    circle.vy += 10;
     generate();
   }
-  */
 }
+
 
 function generate() {
 
@@ -70,6 +72,12 @@ function generate() {
       top : '+='+circle.vx+'px', 
       left : '+='+circle.vy+'px'
     });
+
+    circle.x += circle.vx;
+    circle.y += circle.vy;
+
+    circle.vx = 0;
+    circle.vy = 0;
   }
 
   // set interval for function moveBall to 30ms
@@ -101,13 +109,25 @@ function generate() {
     } 
   }
   */
+
+}
+
+function collision() {
+
+
 }
 
 function getMousePos(e) {
-  const rect = canvas.getBoundingClientRect()
-  const x = e.clientX - rect.left
-  const y = e.clientY - rect.top
+  /*
+  //const rect = canvas.getBoundingClientRect()
+  const x = e.clientX
+  const y = e.clientY
+  */
 
+  var ballOffset = ball.offset();
+
+  const x = ballOffset.left + circle.r
+  const y = ballOffset.top  + circle.r
   return ({x:x, y:y});
 }
 
@@ -121,14 +141,6 @@ function sleep(milliseconds) {
 
 /*      CANVAS DRAWING FUNCTIONS         */
 /* ------------------------------------- */
-
-
-function setBallPosition(x, y) {
-  ball.css("top", y);
-  ball.css("left", x);
-
-  console.log("Ball moved to posotion: %d %d", x, y);
-}
 
 function Circle(x, y, r, vx , vy) {
   this.x  = x;
