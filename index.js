@@ -7,10 +7,13 @@ var l = null;
 var ball = null;
 var processing = false;
 document.addEventListener('mousemove', function(e) {
-  onMouseUpdate(e);
+  if (!processing) { 
+
+    generate(e); 
+  }
 })
 
-$(document).ready(function() {
+$(document).ready(function(e) {
   // canvas and ball html elements 
   canvas = $("#draw-canvas");
   ball = $("#ball");
@@ -34,6 +37,9 @@ $(document).ready(function() {
     generate();
   });
 
+  //var id = setInterval(generate, e, 30);
+
+
 });
 
 
@@ -41,6 +47,11 @@ $(document).ready(function() {
 /* ------------------------------------- */
 
 function onMouseUpdate(e) {
+
+  console.log("Mouse");
+
+  return;
+
 
   if (circle.vx != 0 || circle.vy != 0) {
     console.log("Ni enak")
@@ -67,59 +78,43 @@ function onMouseUpdate(e) {
   }
 }
 
+function animate() {
+  ball.animate({
+    top : '+='+circle.vx+'px', 
+    left : '+='+circle.vy+'px'
+  })
+}
 
-function generate() {
+
+function generate(e) {
 
   console.log("Generate");
+  processing = true;
+
+  var coordinates = getMousePos(e);
+
+  if (Math.abs(circle.x - coordinates.x) < 50 && Math.abs(circle.y - coordinates.y) < 50) {
+    circle.vx = 100;
+    circle.vy = 100;
+  }
 
   if (circle.vx != 0 || circle.vy != 0) {
-
-    ball.animate({
-      top : '+='+circle.vx+'px', 
-      left : '+='+circle.vy+'px'
-    });
 
     circle.x += circle.vx;
     circle.y += circle.vy;
 
+    animate();
+    console.log("%d %d", circle.x, circle.y);
+
     if (collision()) {
-      generate();
+      generate(e);
 
     } else {
       circle.vx = 0;
       circle.vy = 0;
     }
   }
-
-  // set interval for function moveBall to 30ms
-  /*
-  var id = setInterval(moveBall, 30);
-
-  function moveBall() {
-
-    if (circle.vx > 0 || circle.vy > 0) {
-
-      circle.x += circle.vx; 
-      circle.y += circle.vy;
-
-      
-
-      // TODO ***
-      // speed does not decrease linearly
-      circle.vx--;
-      circle.vy--;
-
-      setBallPosition(circle.x, circle.y);
-
-    } else {
-
-      console.log("Else");
-      processing = false;
-      clearInterval(id);
-
-    } 
-  }
-  */
+  processing = false;
 
 }
 
@@ -138,21 +133,19 @@ function collision() {
   }
 
   if (collision_detection) {
+
+    console.log("Collision Detected");
+    collision_detection = false;
+
     return true;
   }
 }
 
 function getMousePos(e) {
-  /*
-  //const rect = canvas.getBoundingClientRect()
-  const x = e.clientX
-  const y = e.clientY
-  */
+  
+  var x = e.pageX - circle.r;
+  var y = e.pageY - circle.r;
 
-  var ballOffset = ball.offset();
-
-  const x = ballOffset.left + circle.r
-  const y = ballOffset.top  + circle.r
   return ({x:x, y:y});
 }
 
