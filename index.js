@@ -93,9 +93,24 @@ function generate(e) {
 
   var coordinates = getMousePos(e);
 
+  // set new ball speed 
   if (Math.abs(circle.x - coordinates.x) < 50 && Math.abs(circle.y - coordinates.y) < 50) {
-    circle.vx = 100;
-    circle.vy = 100;
+    //circle.vx = 100;
+    //circle.vy = 100;
+
+    var hip = Math.sqrt(Math.pow(circle.x - coordinates.x, 2) + Math.pow(circle.y - coordinates.y, 2));
+    var c = {x:circle.x, y:coordinates.y};
+
+    var kat = Math.sqrt(Math.pow(c.x - coordinates.x, 2) + Math.pow(c.y - coordinates.y, 2));
+
+    var kot = Math.tan(kat / hip);
+
+    console.log("%d %d", hip, kat);
+    console.log(kot * 180 / Math.PI);
+
+    processing = false;
+
+    return;
   }
 
   if (circle.vx != 0 || circle.vy != 0) {
