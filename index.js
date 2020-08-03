@@ -80,8 +80,8 @@ function onMouseUpdate(e) {
 
 function animate() {
   ball.animate({
-    top : '+='+circle.vx+'px', 
-    left : '+='+circle.vy+'px'
+    top : '+='+circle.vy+'px', 
+    left : '+='+circle.vx+'px'
   })
 }
 
@@ -95,22 +95,44 @@ function generate(e) {
 
   // set new ball speed 
   if (Math.abs(circle.x - coordinates.x) < 50 && Math.abs(circle.y - coordinates.y) < 50) {
-    //circle.vx = 100;
-    //circle.vy = 100;
 
+    /**
+     * calculating direction angel of approaching mouse pointer
+     */
     var hip = Math.sqrt(Math.pow(circle.x - coordinates.x, 2) + Math.pow(circle.y - coordinates.y, 2));
+
+    // c is the third point of the triangle that all three points form 
+    // we create it by using x coordinate from a ball and y from a mouse 
     var c = {x:circle.x, y:coordinates.y};
 
+    // mapping mouse in one of 4 quadrants
+    var leva  = false;
+    var zgoraj = false;
+    if (coordinates.x < circle.x) { leva = true; }
+    if (coordinates.y < circle.y) { zgoraj = true; }
+
     var kat = Math.sqrt(Math.pow(c.x - coordinates.x, 2) + Math.pow(c.y - coordinates.y, 2));
+    var kot = Math.tan((kat / hip)) * 180 / Math.PI;
 
-    var kot = Math.tan(kat / hip);
+    /**
+     *  setting the right direction and speed for the ball
+     */
+     
+    if (leva && !zgoraj) {
+      kot = 180 - kot;
+    } else if (!leva && !zgoraj) {
+      kot = 180 + kot;
+    } else if (!leva && zgoraj) {
+      kot = 360 - kot;
+    }
 
-    console.log("%d %d", hip, kat);
-    console.log(kot * 180 / Math.PI);
+    console.log(kot);
 
-    processing = false;
+    circle.vx = Math.sin(kot / 180 * Math.PI) * 100;
+    circle.vy = Math.cos(kot / 180 * Math.PI) * 100;
 
-    return;
+    console.log(circle.vx, circle.vy);
+
   }
 
   if (circle.vx != 0 || circle.vy != 0) {
@@ -130,7 +152,6 @@ function generate(e) {
     }
   }
   processing = false;
-
 }
 
 function collision() {
