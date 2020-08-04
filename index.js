@@ -21,6 +21,7 @@ $(document).ready(function(e) {
   // width and height of a canvas 
   width  = canvas.width();
   height = canvas.height();
+  $(document.body).height( height );
   var x = Math.random() * width;
   var y = Math.random() * height;
 
@@ -94,7 +95,7 @@ function generate(e) {
   var coordinates = getMousePos(e);
 
   // set new ball speed 
-  if (Math.abs(circle.x - coordinates.x) < 50 && Math.abs(circle.y - coordinates.y) < 50) {
+  if (Math.abs(circle.x - coordinates.x) < 100 && Math.abs(circle.y - coordinates.y) < 100) {
 
     /**
      * calculating direction angel of approaching mouse pointer
@@ -128,8 +129,8 @@ function generate(e) {
 
     console.log(kot);
 
-    circle.vx = Math.sin(kot / 180 * Math.PI) * 100;
-    circle.vy = Math.cos(kot / 180 * Math.PI) * 100;
+    circle.vx = Math.sin(kot / 180 * Math.PI) * (300 - hip);
+    circle.vy = Math.cos(kot / 180 * Math.PI) * (300 - hip);
 
     console.log(circle.vx, circle.vy);
 
@@ -158,12 +159,12 @@ function collision() {
 
   var collision_detection = false;
 
-  if (circle.x >= width || circle.x == 0) {
+  if (circle.x >= width || circle.x <= 0) {
     circle.vx = circle.vx * -1; 
     collision_detection = true;
   }
 
-  if (circle.y >= height || circle.y == 0) {
+  if (circle.y >= height || circle.y <= 0) {
     circle.vy = circle.vy * -1; 
     collision_detection = true;
   }
