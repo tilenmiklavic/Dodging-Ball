@@ -29,7 +29,7 @@ $(document).ready(function(e) {
   // new circle element
   circle = new Circle(width / 2, height / 2, 25, 0, 0);
 
-  ball.css({top : height/2+'px', left : width/2+'542px'})
+  ball.css({top : height/2+'px', left : width/2+'px'})
 
   ball.click(function() {
     circle.vx = Math.random() * 200 - 100;
@@ -81,7 +81,7 @@ function onMouseUpdate(e) {
 function animate() {
   ball.animate({
     top : '+='+circle.vy+'px', 
-    left : '+='+circle.vx+'px'
+    left : '+='+circle.vx +'px'
   })
 }
 
