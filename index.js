@@ -18,6 +18,8 @@ $(document).ready(function(e) {
   canvas = $("#draw-canvas");
   ball = $("#ball");
 
+  ball.velocity("fadeIn", {duration : 2000});
+
   // width and height of a canvas 
   width  = window.innerWidth;
   height = window.innerHeight;
