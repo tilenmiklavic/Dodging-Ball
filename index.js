@@ -13,12 +13,20 @@ document.addEventListener('mousemove', function(e) {
   }
 })
 
+document.addEventListener('click', function(e) {
+  console.log("Shake")
+  
+  circle.vx = 100;
+  circle.vy = 100;
+
+  animate();
+
+})
+
 $(document).ready(function(e) {
   // canvas and ball html elements 
   canvas = $("#draw-canvas");
   ball = $("#ball");
-
-  ball.velocity("fadeIn", {duration : 2000});
 
   // width and height of a canvas 
   width  = window.innerWidth;
@@ -49,43 +57,19 @@ $(document).ready(function(e) {
 /*      MOUSE AND MOVEMENT FUNCTIONS     */
 /* ------------------------------------- */
 
-function onMouseUpdate(e) {
-
-  console.log("Mouse");
-
-  return;
-
-
-  if (circle.vx != 0 || circle.vy != 0) {
-    console.log("Ni enak")
-    return;
-  }
-
-  console.log("Move");
-  
-  var pos = getMousePos(e);
-
-  // mouse coordinates
-  var pageX = e.pageX - circle.r;
-  var pageY = e.pageY - circle.r;
-
-  // actual ball coordinates
-  var parentOffset = ball.offset(); 
-  const x = parentOffset.left;
-  const y = parentOffset.top;
-
-  if (Math.abs(x - pageX < 25) && Math.abs(y - pageY) < 25) {
-    circle.vx += 50;
-    circle.vy += 50;
-    generate();
-  }
-}
-
 function animate() {
-  ball.animate({
-    top : '+='+circle.vy+'px', 
-    left : '+='+circle.vx +'px'
-  })
+
+  console.log("Animate")
+
+  ball.velocity({
+    top : circle.y+'px', 
+    left : circle.x+'px'
+    },
+    { duration : 1000 } 
+  );
+
+  console.log("Done animating");
+
 }
 
 
@@ -96,7 +80,7 @@ function generate(e) {
 
   var coordinates = getMousePos(e);
 
-  // set new ball speed 
+
   if (Math.abs(circle.x - coordinates.x) < 100 && Math.abs(circle.y - coordinates.y) < 100) {
 
     /**
@@ -129,12 +113,9 @@ function generate(e) {
       kot = 360 - kot;
     }
 
-    console.log(kot);
 
-    circle.vx = Math.sin(kot / 180 * Math.PI) * (300 - hip);
-    circle.vy = Math.cos(kot / 180 * Math.PI) * (300 - hip);
-
-    console.log(circle.vx, circle.vy);
+    circle.vx = Math.sin(kot / 180 * Math.PI) * (200 - hip);
+    circle.vy = Math.cos(kot / 180 * Math.PI) * (200 - hip);
 
   }
 
@@ -144,7 +125,6 @@ function generate(e) {
     circle.y += circle.vy;
 
     animate();
-    console.log("%d %d", circle.x, circle.y);
 
     if (collision()) {
       generate(e);
@@ -152,6 +132,7 @@ function generate(e) {
     } else {
       circle.vx = 0;
       circle.vy = 0;
+
     }
   }
   processing = false;
@@ -173,7 +154,6 @@ function collision() {
 
   if (collision_detection) {
 
-    console.log("Collision Detected");
     collision_detection = false;
 
     return true;
