@@ -19,8 +19,8 @@ $(document).ready(function(e) {
   ball = $("#ball");
 
   // width and height of a canvas 
-  width  = canvas.width();
-  height = canvas.height();
+  width  = window.innerWidth;
+  height = window.innerHeight;
   $(document.body).height( height );
   var x = Math.random() * width;
   var y = Math.random() * height;
