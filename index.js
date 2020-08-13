@@ -140,6 +140,22 @@ function generate(e) {
 
   if (circle.vx != 0 || circle.vy != 0) {
 
+    if (circle.x + circle.vx < 0) {
+      circle.vx = (circle.vx + circle.x) * -1;
+      circle.x = 0;
+    } else if (circle.x + circle.vx > width) {
+      circle.vx = (circle.vx - (width - circle.x)) * -1;
+      circle.x = width;
+    }
+
+    if (circle.y + circle.vy < 0) {
+      circle.vy = (circle.vy + circle.y) * -1;
+      circle.y = 0;
+    } else if (circle.y + circle.vy > height) {
+      circle.vy = (circle.vy - (height - circle.y)) * -1;
+      circle.y = height;
+    }
+
     circle.x += circle.vx;
     circle.y += circle.vy;
 
