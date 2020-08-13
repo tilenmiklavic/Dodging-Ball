@@ -6,20 +6,30 @@ var circle = null;
 var l = null;
 var ball = null;
 var processing = false;
-document.addEventListener('mousemove', function(e) {
-  if (!processing) { 
+var id;
+var mouse_coordinates;
+var running = true;
 
-    generate(e); 
-  }
+// update mouse coordinates on every mousemove
+document.addEventListener('mousemove', function(e) {
+  var coor = getMousePos(e);
+
+  mouse_coordinates = { x : coor.x , y : coor.y};
+
+  $("#debug_div").text(mouse_coordinates.x + " " + mouse_coordinates.y)
 })
 
+// halt generate function execution 
 document.addEventListener('click', function(e) {
   console.log("Shake")
   
-  circle.vx = 100;
-  circle.vy = 100;
-
-  animate();
+  if (running) {
+    clearInterval(id)
+    running = false;
+  } else {
+    id = setInterval(generate, 30, e);
+    running = true;
+  }
 
 })
 
@@ -36,6 +46,7 @@ $(document).ready(function(e) {
   var y = Math.random() * height;
 
   console.log("Screen width: %d | height: %d", width, height);
+  $("#screen_div").text(width + " " + height);
 
   // new circle element
   circle = new Circle(width / 2, height / 2, 25, 0, 0);
@@ -48,8 +59,13 @@ $(document).ready(function(e) {
     generate();
   });
 
-  //var id = setInterval(generate, e, 30);
+  mouse_coordinates = getMousePos(e);
+  console.log(mouse_coordinates);
 
+  /**
+   * set interval and let function generate execute every 30ms
+   */
+  id = setInterval(generate, 30, e);
 
 });
 
@@ -61,14 +77,18 @@ function animate() {
 
   console.log("Animate")
 
+  var dur = (1 - (circle.vx + circle.vy) / 400) * 500;
+
   ball.velocity({
     top : circle.y+'px', 
     left : circle.x+'px'
     },
-    { duration : 1000 } 
+    { duration : dur } 
   );
 
   console.log("Done animating");
+
+  $("#ball_position_div").text(circle.x + " " + circle.y);
 
 }
 
@@ -78,27 +98,27 @@ function generate(e) {
   console.log("Generate");
   processing = true;
 
-  var coordinates = getMousePos(e);
+  console.log(mouse_coordinates.x, mouse_coordinates.y)
 
 
-  if (Math.abs(circle.x - coordinates.x) < 100 && Math.abs(circle.y - coordinates.y) < 100) {
+  if (Math.abs(circle.x - mouse_coordinates.x) < 300 && Math.abs(circle.y - mouse_coordinates.y) < 300) {
 
     /**
      * calculating direction angel of approaching mouse pointer
      */
-    var hip = Math.sqrt(Math.pow(circle.x - coordinates.x, 2) + Math.pow(circle.y - coordinates.y, 2));
+    var hip = Math.sqrt(Math.pow(circle.x - mouse_coordinates.x, 2) + Math.pow(circle.y - mouse_coordinates.y, 2));
 
     // c is the third point of the triangle that all three points form 
     // we create it by using x coordinate from a ball and y from a mouse 
-    var c = {x:circle.x, y:coordinates.y};
+    var c = {x:circle.x, y:mouse_coordinates.y};
 
     // mapping mouse in one of 4 quadrants
     var leva  = false;
     var zgoraj = false;
-    if (coordinates.x < circle.x) { leva = true; }
-    if (coordinates.y < circle.y) { zgoraj = true; }
+    if (mouse_coordinates.x < circle.x) { leva = true; }
+    if (mouse_coordinates.y < circle.y) { zgoraj = true; }
 
-    var kat = Math.sqrt(Math.pow(c.x - coordinates.x, 2) + Math.pow(c.y - coordinates.y, 2));
+    var kat = Math.sqrt(Math.pow(c.x - mouse_coordinates.x, 2) + Math.pow(c.y - mouse_coordinates.y, 2));
     var kot = Math.tan((kat / hip)) * 180 / Math.PI;
 
     /**
@@ -114,12 +134,27 @@ function generate(e) {
     }
 
 
-    circle.vx = Math.sin(kot / 180 * Math.PI) * (200 - hip);
-    circle.vy = Math.cos(kot / 180 * Math.PI) * (200 - hip);
-
+    circle.vx = Math.sin(kot / 180 * Math.PI) * (500 - hip);
+    circle.vy = Math.cos(kot / 180 * Math.PI) * (500 - hip);
   }
 
   if (circle.vx != 0 || circle.vy != 0) {
+
+    if (circle.x + circle.vx < 0) {
+      circle.vx = (circle.vx + circle.x) * -1;
+      circle.x = 0;
+    } else if (circle.x + circle.vx > width) {
+      circle.vx = (circle.vx - (width - circle.x)) * -1;
+      circle.x = width;
+    }
+
+    if (circle.y + circle.vy < 0) {
+      circle.vy = (circle.vy + circle.y) * -1;
+      circle.y = 0;
+    } else if (circle.y + circle.vy > height) {
+      circle.vy = (circle.vy - (height - circle.y)) * -1;
+      circle.y = height;
+    }
 
     circle.x += circle.vx;
     circle.y += circle.vy;
@@ -162,8 +197,8 @@ function collision() {
 
 function getMousePos(e) {
   
-  var x = e.pageX - circle.r;
-  var y = e.pageY - circle.r;
+  var x = e.pageX - circle.r + 25;
+  var y = e.pageY - circle.r + 25;
 
   return ({x:x, y:y});
 }
